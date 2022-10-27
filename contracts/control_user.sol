@@ -9,4 +9,10 @@ contract ControlUser {
         require(msg.sender == _sender);
         _;
     }
+
+    modifier onlyReceiver(address _receiver) {
+        /// @dev 受取人とmsg.senderが一致するかの確認
+        require(msg.sender == _receiver);
+        _;
+    }
 }

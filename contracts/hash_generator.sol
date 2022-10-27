@@ -6,8 +6,8 @@ import "./system.sol";
 
 /// @dev ハッシュ値を生成するコントラクト
 contract HashGenerator is System {
-    function generate(uint Id, address _sender, address _receiver, uint _transactionNo) internal pure returns (bytes32) {
+    function generate(uint id, address sender, address receiver, uint _transactionNo) internal pure returns (bytes32) {
         /// @dev ラベルIDと取引情報からハッシュ値を生成する関数
-        return keccak256(abi.encodePacked(Id, _sender, _receiver, _transactionNo));
+        return keccak256(abi.encodePacked(id, sender, receiver, _transactionNo));
     }
 }
