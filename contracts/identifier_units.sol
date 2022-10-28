@@ -8,7 +8,7 @@ import "./hash_generator.sol";
 contract IdentifierUnits is HashGenerator {
     modifier receiverStarted(uint _transactionNo) {
         /// @dev 受取人が検証をスタートしているかの確認
-        require(transactionNoToCheckTimes[_transactionNo].started == true);
+        require(transactionNoToCheckTimes[_transactionNo].started == true, "Validation not started.");
         _;
     }
 
@@ -21,7 +21,7 @@ contract IdentifierUnits is HashGenerator {
 
     function startValidate(uint id, address sender, address receiver, uint _transactionNo) public onlyReceiver(receiver) {
         /// @dev 受取人が検証を始める際に最初に実行させる関数
-        require(transactionNoToCheckTimes[_transactionNo].started == false); /// @dev スタートしていないかの確認
+        require(transactionNoToCheckTimes[_transactionNo].started == false, "Validation started."); /// @dev スタートしていないかの確認
 
         transactionNoToCheckTimes[_transactionNo].started = true; /// @dev 検証をスタートさせる
 
@@ -32,7 +32,7 @@ contract IdentifierUnits is HashGenerator {
     function getUpdateTimes(address receiver, uint _transactionNo) public onlyReceiver(receiver) receiverStarted(_transactionNo) returns (uint) {
         /// @dev 該当取引の配送者の経由回数を返す関数
 
-        require(transactionNoToCheckTimes[_transactionNo].checked == false); /// @dev getUpdateTimes関数を未使用かどうかの確認
+        require(transactionNoToCheckTimes[_transactionNo].checked == false, "Used getUpdateTimes."); /// @dev getUpdateTimes関数を未使用かどうかの確認
 
         transactionNoToCheckTimes[_transactionNo].checked = true; /// @dev getUpdateTimes関数を使用済みにする
         /// @dev 前回更新からの差分を求めて.timesCopyに格納
@@ -51,6 +51,16 @@ contract IdentifierUnits is HashGenerator {
         transactionNoToCheckTimes[_transactionNo].timesCopy--; /// @dev 更新残り回数を減らす
 
         return transactionNoToCheckTimes[_transactionNo].hash;
+    }
+
+    function clearVerification(uint id, address sender, address receiver, uint _transactionNo) public onlyReceiver(receiver) {
+        /// @dev 検証中の処理を初期化する関数
+        /// @dev 最初の検証用情報に戻す
+        transactionNoToCheckTimes[_transactionNo].hash = generate(id, sender, receiver, _transactionNo);
+
+        /// @dev getUpdateTimes関数を未使用に設定する
+        transactionNoToCheckTimes[_transactionNo].checked = false;
+        transactionNoToCheckTimes[_transactionNo].times = 0;
     }
 
     function middleConfirm(address receiver, uint _transactionNo) public view onlyReceiver(receiver) validateConfirm(_transactionNo) returns (string memory, bytes32) {
