@@ -21,7 +21,7 @@ contract ShipperUnits is HashGenerator {
         transactionNoToCheckTimes[_transactionNo].checked = false; /// @dev 配送者を経由したので受取人にもう一度チェックさせる
 
         /// @dev 配送者のアドレスと経由回数、前の検証用情報から上書き用の検証用情報を生成
-        bytes32 newHash = keccak256(abi.encodePacked(shipper, idToShipperAdrToTimes[id][shipper], identInfoToTransactionInfo[_transactionNo].verificationInfo));
+        bytes32 newHash = keccak256(abi.encodePacked(id, idToShipperAdrToTimes[id][shipper], identInfoToTransactionInfo[_transactionNo].verificationInfo));
 
         if(nextShipper != shipper){
             /// @dev 現在の配送者で経由が最後の場合には受取人に届けると判断するため次の処理は飛ばす

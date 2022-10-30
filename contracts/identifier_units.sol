@@ -47,7 +47,7 @@ contract IdentifierUnits is HashGenerator {
         require(transactionNoToCheckTimes[_transactionNo].timesCopy != 0); /// @dev 更新回数が残り0でないことの確認
 
         /// @dev ハッシュ値の更新
-        transactionNoToCheckTimes[_transactionNo].hash = keccak256(abi.encodePacked(shipper, idToShipperAdrToTimes[id][shipper], transactionNoToCheckTimes[_transactionNo].hash));
+        transactionNoToCheckTimes[_transactionNo].hash = keccak256(abi.encodePacked(id, idToShipperAdrToTimes[id][shipper], transactionNoToCheckTimes[_transactionNo].hash));
         transactionNoToCheckTimes[_transactionNo].timesCopy--; /// @dev 更新残り回数を減らす
 
         return transactionNoToCheckTimes[_transactionNo].hash;
