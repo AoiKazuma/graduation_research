@@ -10,9 +10,11 @@ contract RegisterUnits is HashGenerator {
         /// @dev 取引情報をセットする関数 -> 登録された取引番号を返す
 
         /// @dev register関数を呼び出し、検証用情報を生成しマッピングに格納する
-        identInfoToTransactionInfo[transactionCount] = TransactionInfo(register(id, sender, receiver, transactionCount), false, transactionCount, 0, true);
-
-        transactionNoToCheckTimes[transactionCount] = CheckTimes(false, false, 0, 0, 0); /// @dev CheckTimes構造体の初期化
+        identInfoToTransactionInfo[transactionCount].verificationInfo.push(register(id, sender, receiver, transactionCount));
+        identInfoToTransactionInfo[transactionCount].validated = false;
+        identInfoToTransactionInfo[transactionCount].transactionNo = transactionCount;
+        identInfoToTransactionInfo[transactionCount].shipTimes = 0;
+        identInfoToTransactionInfo[transactionCount].first = true;
 
         transactionCount++; /// @dev 取引番号の更新
 
