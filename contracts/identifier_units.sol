@@ -22,26 +22,27 @@ contract IdentifierUnits is HashGenerator {
         }
     }
 
-    function identify(uint id, address sender, address receiver, uint _transactionNo) public onlyReceiver(receiver) validateConfirm(_transactionNo) returns (string memory, uint) {
+    function identify(uint id, uint correctId, address sender, address receiver, uint _transactionNo) public onlyReceiver(receiver) validateConfirm(_transactionNo) returns (string memory, uint) {
         /// @dev マッピングから検証用情報を検索し、検証する関数
-        uint point = 0; /// @dev どの配送ポイントで不正が行われたかを格納する変数
+        uint point = identInfoToTransactionInfo[_transactionNo].shipTimes + 1; /// @dev どの配送ポイントで不正が行われたかを格納する変数
 
-        for(uint i=0;i<=identInfoToTransactionInfo[_transactionNo].shipTimes;i++){
-            /// @dev 配送者が検証した情報を１つずつ見ていく
-            if(identInfoToTransactionInfo[_transactionNo].verificationInfo[i+1] != keccak256(abi.encodePacked(id, i+1, identInfoToTransactionInfo[_transactionNo].verificationInfo[0]))){
-                /// @dev 検証用情報が一致しなかった場合
-                point = i + 1; /// @dev どの配送者で検証情報が一致しなかったのかを格納
-                break;
-            }
-        }
-
-        if(identInfoToTransactionInfo[_transactionNo].verificationInfo[0] == generate(id, sender, receiver, _transactionNo) && point == 0){
+        if(identInfoToTransactionInfo[_transactionNo].verificationInfo[0] == generate(id, sender, receiver, _transactionNo)){
             /// @dev 受取人が生成したハッシュ値と検証用情報が一致していれば検証済情報を付与する
             identInfoToTransactionInfo[_transactionNo].validated = true;
 
-            return ("Validation succeeded!!", point);           
+            return ("Validation succeeded!!", 0);           
         } else {
             /// @dev 検証に失敗した場合、どこの配送地点で不正が行われていたのかを返す
+            for(uint i=identInfoToTransactionInfo[_transactionNo].shipTimes;i>0;i--){
+                /// @dev 配送者が検証した情報を遡って１つずつ見ていく
+                if(identInfoToTransactionInfo[_transactionNo].verificationInfo[i] == keccak256(abi.encodePacked(correctId, i, identInfoToTransactionInfo[_transactionNo].verificationInfo[0]))){
+                    /// @dev 一致した場合にはこの後不正が行われたと判断する 
+                    break;
+                } else {
+                    point--;
+                }
+            }
+
             return ("Validation failed.", point);
         }
     }
