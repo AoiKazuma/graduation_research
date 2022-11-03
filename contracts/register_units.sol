@@ -14,8 +14,7 @@ contract RegisterUnits is HashGenerator {
         identInfoToTransactionInfo[transactionCount].validated = false;
         identInfoToTransactionInfo[transactionCount].transactionNo = transactionCount;
         identInfoToTransactionInfo[transactionCount].shipTimes = 0;
-        identInfoToTransactionInfo[transactionCount].first = true;
-
+        
         transactionCount++; /// @dev 取引番号の更新
 
         return transactionCount - 1;

@@ -11,7 +11,6 @@ contract System is ControlUser {
         bool validated;           /// @dev 取引情報が検証済みかどうかの確認に使用する
         uint transactionNo;       /// @dev 取引番号
         uint shipTimes;           /// @dev 経由回数
-        bool first;               /// @dev 最初の経由地を判断
     }
 
     uint transactionCount = 1; /// @dev 取引の数を格納する変数 -> 取引番号の割り振りに使用する
