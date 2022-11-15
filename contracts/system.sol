@@ -18,6 +18,7 @@ contract System is ControlUser {
     mapping (uint => TransactionInfo) identInfoToTransactionInfo; /// @dev 識別情報(取引番号)から検証用情報の構造体を検索するマッピング
     mapping (uint => uint) transactionNoToId;                            /// @dev 取引番号から特徴量を検索するマッピング
     mapping (uint => uint) idToTransactionNo;                            /// @dev 特徴量から取引番号を検索するマッピング
+    mapping (uint => mapping (uint => address)) transactionNoToShipper; /// @dev 取引番号と経由回数から配送者のアドレスを検索するダブルマッピング
 
     function getInspectInfo(uint _transactionNo) public view returns (bytes32) {
         /// @dev マッピングから識別情報(取引番号)をもとに検証用情報を取得する関数

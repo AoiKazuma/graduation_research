@@ -13,8 +13,9 @@ contract ShipperUnits is HashGenerator {
         identInfoToTransactionInfo[_transactionNo].shipTimes++; /// @dev 経由回数を増加させる
 
         /// @dev 配送者のアドレスと経由回数、前の検証用情報から上書き用の検証用情報を生成
-        bytes32 newHash = keccak256(abi.encodePacked(id, identInfoToTransactionInfo[_transactionNo].shipTimes, identInfoToTransactionInfo[_transactionNo].verificationInfo[0]));
+        bytes32 newHash = keccak256(abi.encodePacked(id, identInfoToTransactionInfo[_transactionNo].shipTimes, identInfoToTransactionInfo[_transactionNo].verificationInfo[0], shipper));
 
+        transactionNoToShipper[_transactionNo][identInfoToTransactionInfo[_transactionNo].shipTimes] = shipper; /// @dev マッピングに配送者のアドレスを格納
         identInfoToTransactionInfo[_transactionNo].verificationInfo.push(newHash); /// @dev 途中の検証用情報の追加
 
         return (newHash, identInfoToTransactionInfo[_transactionNo].shipTimes);

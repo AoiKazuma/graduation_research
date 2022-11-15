@@ -14,7 +14,7 @@ contract IdentifierUnits is HashGenerator {
 
     function middleConfirm(uint id, address receiver, uint _transactionNo, uint _shipTimes) public view onlyReceiver(receiver) validateConfirm(_transactionNo) returns (string memory, bytes32) {
         /// @dev 途中の検証用情報を確認する関数
-        if(identInfoToTransactionInfo[_transactionNo].verificationInfo[_shipTimes] == keccak256(abi.encodePacked(id, _shipTimes, identInfoToTransactionInfo[_transactionNo].verificationInfo[0]))){
+        if(identInfoToTransactionInfo[_transactionNo].verificationInfo[_shipTimes] == keccak256(abi.encodePacked(id, _shipTimes, identInfoToTransactionInfo[_transactionNo].verificationInfo[0], transactionNoToShipper[_transactionNo][_shipTimes]))){
             /// @dev 途中までの検証情報が一致するかを確認
             return ("Middle validation succeeded!!", keccak256(abi.encodePacked(id, _shipTimes, identInfoToTransactionInfo[_transactionNo].verificationInfo[0])));
         } else {
@@ -35,7 +35,7 @@ contract IdentifierUnits is HashGenerator {
             /// @dev 検証に失敗した場合、どこの配送地点で不正が行われていたのかを返す
             for(uint i=identInfoToTransactionInfo[_transactionNo].shipTimes;i>0;i--){
                 /// @dev 配送者が検証した情報を遡って１つずつ見ていく
-                if(identInfoToTransactionInfo[_transactionNo].verificationInfo[i] == keccak256(abi.encodePacked(correctId, i, identInfoToTransactionInfo[_transactionNo].verificationInfo[0]))){
+                if(identInfoToTransactionInfo[_transactionNo].verificationInfo[i] == keccak256(abi.encodePacked(correctId, i, identInfoToTransactionInfo[_transactionNo].verificationInfo[0], transactionNoToShipper[_transactionNo][i]))){
                     /// @dev 一致した場合にはこの後不正が行われたと判断する 
                     break;
                 } else {
