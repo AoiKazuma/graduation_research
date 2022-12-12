@@ -22,7 +22,7 @@ contract IdentifierUnits is HashGenerator {
         }
     }
 
-    function identify(uint id, uint correctId, address sender, address receiver, uint _transactionNo) public onlyReceiver(receiver) validateConfirm(_transactionNo) returns (string memory, uint) {
+    function identify(uint id, uint correctId, address sender, address receiver, uint _transactionNo) public onlyReceiver(receiver) validateConfirm(_transactionNo) returns (bytes32, bytes32, string memory, uint) {
         /// @dev マッピングから検証用情報を検索し、検証する関数
         uint point = identInfoToTransactionInfo[_transactionNo].shipTimes + 1; /// @dev どの配送ポイントで不正が行われたかを格納する変数
 
@@ -30,7 +30,7 @@ contract IdentifierUnits is HashGenerator {
             /// @dev 受取人が生成したハッシュ値と検証用情報が一致していれば検証済情報を付与する
             identInfoToTransactionInfo[_transactionNo].validated = true;
 
-            return ("Validation succeeded!!", 0);           
+            return (generate(id, sender, receiver, _transactionNo), identInfoToTransactionInfo[_transactionNo].verificationInfo[0], "Validation succeeded!!", 0);           
         } else {
             /// @dev 検証に失敗した場合、どこの配送地点で不正が行われていたのかを返す
             for(uint i=identInfoToTransactionInfo[_transactionNo].shipTimes;i>0;i--){
@@ -43,7 +43,7 @@ contract IdentifierUnits is HashGenerator {
                 }
             }
 
-            return ("Validation failed.", point);
+            return (generate(id, sender, receiver, _transactionNo), identInfoToTransactionInfo[_transactionNo].verificationInfo[0], "Validation failed.", point);
         }
     }
 }
